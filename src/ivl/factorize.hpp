@@ -22,7 +22,7 @@ namespace ivl::nt {
   using Factorization = std::vector<std::pair<T, ExponentType>>;
 
   template<typename T>
-  Factorization<T> factorize(T n){
+  constexpr Factorization<T> factorize(T n){
     Factorization<T> factorization;
     for (T p = 2; p*p <= n; ++p){
       if (n%p == 0){
@@ -39,10 +39,12 @@ namespace ivl::nt {
     return factorization;
   }
 
+  static_assert(factorize<int>(2100) == std::vector<std::pair<int, std::uint32_t>>{{2, 2}, {3, 1}, {5, 2}, {7, 1}});
+
   // for now not mixing factorizations of different types,
   // seems like the safer choice a priori
   template<typename T>
-  Factorization<T> merge_factorizations(const Factorization<T>& left, const Factorization<T>& right){
+  constexpr Factorization<T> merge_factorizations(const Factorization<T>& left, const Factorization<T>& right){
     Factorization<T> out;
     auto it_left = left.begin();
     auto it_right = right.begin();

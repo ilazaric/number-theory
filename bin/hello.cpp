@@ -32,11 +32,16 @@ int main(){
     //   std::cout << d << " ";
     // std::cout << std::endl;
 
-    std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v1(f, ivl::nt::factorization_tag{}) << std::endl;
+    // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v1(f, ivl::nt::factorization_tag{}) << std::endl;
     // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v1(n) << std::endl;
     // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v2(f, ivl::nt::factorization_tag{}) << std::endl;
     // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v2(n) << std::endl;
     std::cout << "tau(" << n << ") -- " << tau_regular(f) << std::endl;
+    // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v3<std::uint32_t>(f) << std::endl;
+    // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v4(f) << std::endl;
+    std::cout << "tau(" << n << ") -- " << ivl::nt::tau_compiletime(f) << std::endl;
+    std::cout << "tau(" << n << ") -- " << ivl::nt::tau_runtime(f) << std::endl;
+    std::cout << "tau(" << n << ") -- " << ivl::nt::tau_dirichlet(f) << std::endl;
     
   }
   return 0;
