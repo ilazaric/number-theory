@@ -121,6 +121,7 @@ constexpr auto one = [](auto) { return 1; };
 // great reason why factorization should be lazy
 // or `Factorization<T>` should contain the arg as well
 // 2nd is easier to do
+// 2nd actually is implied by 1st
 constexpr auto id = []<typename T>(const Factorization<T> factorization) {
   T out{1};
   for (auto [p, e] : factorization) {
