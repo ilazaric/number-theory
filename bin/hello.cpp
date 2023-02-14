@@ -21,7 +21,7 @@ std::ostream& operator<<(std::ostream& out, const std::pair<T, U>& p){
 template<typename T>
 std::ostream& operator<<(std::ostream& out, const std::vector<T>& vec){
   for (const auto& x : vec)
-    out << vec << " ";
+    out << x << " ";
   return out;
 }
 
@@ -40,8 +40,8 @@ int main(){
 
     ivl::nt::DivisorIterable di{f};
     std::cout << "divisors: ";
-    for (auto d : ivl::nt::DivisorIterable{f})
-      std::cout << d << " ";
+    for (auto d : di) //ivl::nt::DivisorIterable{f})
+      std::cout << "[" << d << "] ";
     std::cout << std::endl;
 
     // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v1(f, ivl::nt::factorization_tag{}) << std::endl;

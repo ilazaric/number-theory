@@ -65,7 +65,7 @@ namespace ivl::nt {
 	std::size_t i = 0;
 	// TODO: refactor
 	for (; i < divisor.size(); ++i){
-	  if (++divisor[i].second == (*factorization)[i].second){
+	  if (++divisor[i].second == (*factorization)[i].second+1){
 	    divisor[i].second = 0;
 	  } else {
 	    break;
