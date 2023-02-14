@@ -13,6 +13,18 @@ std::uint32_t tau_regular(const ivl::nt::Factorization<T>& factorization){
   return out;
 }
 
+template<typename T, typename U>
+std::ostream& operator<<(std::ostream& out, const std::pair<T, U>& p){
+  return out << p.first << "^" << p.second;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, const std::vector<T>& vec){
+  for (const auto& x : vec)
+    out << vec << " ";
+  return out;
+}
+
 int main(){
   using ivl::nt::factorize;
   
@@ -26,11 +38,11 @@ int main(){
       std::cout << p << "^" << e << " ";
     std::cout << std::endl;
 
-    // ivl::nt::DivisorIterable di{f};
-    // std::cout << "divisors: ";
-    // for (auto d : ivl::nt::DivisorIterable{f})
-    //   std::cout << d << " ";
-    // std::cout << std::endl;
+    ivl::nt::DivisorIterable di{f};
+    std::cout << "divisors: ";
+    for (auto d : ivl::nt::DivisorIterable{f})
+      std::cout << d << " ";
+    std::cout << std::endl;
 
     // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v1(f, ivl::nt::factorization_tag{}) << std::endl;
     // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v1(n) << std::endl;
