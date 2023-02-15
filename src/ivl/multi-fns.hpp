@@ -106,6 +106,8 @@ constexpr auto pow = []<typename T>(T n, std::uint32_t e) -> T {
 constexpr auto powsum = []<typename T>(T n, std::uint32_t e) -> T {
   if (e == 0)
     return 1;
+  if (n == 1)
+    return e + 1;
   T prev = ::ivl::nt::pow(n, e - 1);
   // TODO: the inner-most -1 is kinda not needed?
   // should i remove it?
@@ -129,6 +131,14 @@ constexpr auto id = []<typename T>(const Factorization<T> factorization) {
   }
   return out;
 };
+
+// this is the neutral element with respect to the dirichlet convolution
+constexpr auto epsilon = []<typename T>(const Factorization<T> factorization) {
+  return id(factorization) == 1 ? 1 : 0;
+};
+static_assert(test_equality<Factorization<std::uint32_t>>(
+    sigma_compiletime,
+    compiletime::dirichlet_convolution<sigma_compiletime, epsilon>, 100));
 
 constexpr auto tau_dirichlet = compiletime::dirichlet_convolution<one, one>;
 static_assert(test_equality<Factorization<std::uint32_t>>(tau_compiletime,
