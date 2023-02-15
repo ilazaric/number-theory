@@ -11,3 +11,6 @@ target_include_directories(ivl INTERFACE src)
 
 add_executable(hello bin/hello.cpp)
 target_link_libraries(hello PRIVATE ivl)
+
+add_executable(hello2 bin/hello2.cpp)
+target_link_libraries(hello2 PRIVATE ivl)
