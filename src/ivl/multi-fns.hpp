@@ -33,9 +33,7 @@ constexpr auto multiplicative_completion =
 } // namespace compiletime
 
 constexpr auto tau_compiletime =
-    compiletime::multiplicative_completion<[](auto, auto e) {
-      return e + 1;
-    }>;
+    compiletime::multiplicative_completion<[](auto, auto e) { return e + 1; }>;
 
 namespace runtime {
 constexpr auto multiplicative_completion(auto &&callable) {

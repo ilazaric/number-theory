@@ -20,25 +20,28 @@ using ExponentType = std::uint32_t;
 
 // TODO-think: is `std::vector` the best choice for the factorization?
 // no idea, it probably should be customizable, whatever for now
-  // TODO: make this a wrapper around `std::vector`, this is prone to bugs:
-  // Factorization<T> f{100}; <-- doesn't do what a lot of people would think
-  template <typename T, typename ET = ExponentType>
+// TODO: make this a wrapper around `std::vector`, this is prone to bugs:
+// Factorization<T> f{100}; <-- doesn't do what a lot of people would think
+template <typename T, typename ET = ExponentType>
 using Factorization = std::vector<std::pair<T, ET>>;
 
-  class ZeroFactorizationException : public std::exception {
-  public:
-    virtual const char* what() const noexcept override {
-      return "tried to factorize 0 (zero)";
-    }
-  };
+class ZeroFactorizationException : public std::exception {
+public:
+  virtual const char *what() const noexcept override {
+    return "tried to factorize 0 (zero)";
+  }
+};
 
-  template <typename T, typename ET = ExponentType> constexpr Factorization<T, ET> factorize(T n) {
-    // we could wrap 0 with T{} but this could be better,
-    // if the type implements heterogenous comparison
-    if (n < 0) n = -n;
-    // this could be moved into a contract if those existed in C++
-    if (n == 0) throw ZeroFactorizationException{};
-    Factorization<T, ET> factorization;
+template <typename T, typename ET = ExponentType>
+constexpr Factorization<T, ET> factorize(T n) {
+  // we could wrap 0 with T{} but this could be better,
+  // if the type implements heterogenous comparison
+  if (n < 0)
+    n = -n;
+  // this could be moved into a contract if those existed in C++
+  if (n == 0)
+    throw ZeroFactorizationException{};
+  Factorization<T, ET> factorization;
   for (T p = 2; p * p <= n; ++p) {
     if (n % p == 0) {
       factorization.emplace_back(p, 0);
@@ -54,12 +57,12 @@ using Factorization = std::vector<std::pair<T, ET>>;
   return factorization;
 }
 
-  template <typename T, typename ET = ExponentType>
-  constexpr const Factorization<T, ET> &factorize(const Factorization<T, ET> &f) {
+template <typename T, typename ET = ExponentType>
+constexpr const Factorization<T, ET> &factorize(const Factorization<T, ET> &f) {
   return f;
 }
 
-  static_assert(factorize<int, std::uint32_t>(2100) ==
+static_assert(factorize<int, std::uint32_t>(2100) ==
               std::vector<std::pair<int, std::uint32_t>>{
                   {2, 2}, {3, 1}, {5, 2}, {7, 1}});
 
