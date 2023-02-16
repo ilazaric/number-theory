@@ -30,8 +30,8 @@ int main()
 
     ivl::nt::DivisorIterable di{ factorize(lazy) };
     std::cout << "divisors: ";
-    for (auto d : di)// ivl::nt::DivisorIterable{f})
-      std::cout << "[" << d << "] ";
+    for (auto d : ivl::nt::DivisorIterable{ factorize(lazy) }) std::cout << ivl::nt::id(d) << " ";
+    // std::cout << "[" << d << "] ";
     std::cout << std::endl;
 
     std::cout << "tau(" << n << ") -- " << ivl::nt::tau_compiletime(factorize(lazy)) << std::endl;
