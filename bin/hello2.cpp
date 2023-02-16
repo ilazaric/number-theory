@@ -5,15 +5,6 @@
 
 #include <iostream>
 
-template <typename T>
-std::uint32_t tau_regular(const ivl::nt::Factorization<T> &factorization) {
-  std::uint32_t out = 1;
-  for (auto [p, e] : factorization) {
-    out *= e + 1;
-  }
-  return out;
-}
-
 template <typename T, typename U>
 std::ostream &operator<<(std::ostream &out, const std::pair<T, U> &p) {
   return out << p.first << "^" << p.second;
@@ -44,16 +35,6 @@ int main() {
       std::cout << "[" << d << "] ";
     std::cout << std::endl;
 
-    // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v1(f,
-    // ivl::nt::factorization_tag{}) << std::endl; std::cout << "tau(" << n <<
-    // ") -- " << ivl::nt::tau_v1(n) << std::endl; std::cout << "tau(" << n <<
-    // ") -- " << ivl::nt::tau_v2(f, ivl::nt::factorization_tag{}) << std::endl;
-    // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v2(n) << std::endl;
-    std::cout << "tau(" << n << ") -- " << tau_regular(factorize(lazy))
-              << std::endl;
-    // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v3<std::uint32_t>(f)
-    // << std::endl; std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v4(f)
-    // << std::endl;
     std::cout << "tau(" << n << ") -- "
               << ivl::nt::tau_compiletime(factorize(lazy)) << std::endl;
     std::cout << "tau(" << n << ") -- " << ivl::nt::tau_runtime(factorize(lazy))
