@@ -22,25 +22,21 @@ using ExponentType = std::uint32_t;
 // no idea, it probably should be customizable, whatever for now
 // TODO: make this a wrapper around `std::vector`, this is prone to bugs:
 // Factorization<int> f{100}; <-- doesn't do what a lot of people would think
-template <typename T, typename ET = ExponentType>
-using Factorization = std::vector<std::pair<T, ET>>;
+template<typename T, typename ET = ExponentType> using Factorization = std::vector<std::pair<T, ET>>;
 
-class ZeroFactorizationException : public std::exception {
+class ZeroFactorizationException : public std::exception
+{
 public:
-  virtual const char *what() const noexcept override {
-    return "tried to factorize 0 (zero)";
-  }
+  virtual const char *what() const noexcept override { return "tried to factorize 0 (zero)"; }
 };
 
-template <typename T, typename ET = ExponentType>
-constexpr Factorization<T, ET> factorize(T n) {
+template<typename T, typename ET = ExponentType> constexpr Factorization<T, ET> factorize(T n)
+{
   // we could wrap 0 with T{} but this could be better,
   // if the type implements heterogenous comparison
-  if (n < 0)
-    n = -n;
+  if (n < 0) n = -n;
   // this could be moved into a contract if those existed in C++
-  if (n == 0)
-    throw ZeroFactorizationException{};
+  if (n == 0) throw ZeroFactorizationException{};
   Factorization<T, ET> factorization;
   for (T p = 2; p * p <= n; ++p) {
     if (n % p == 0) {
@@ -51,26 +47,24 @@ constexpr Factorization<T, ET> factorize(T n) {
       }
     }
   }
-  if (n != 1) {
-    factorization.emplace_back(n, 1);
-  }
+  if (n != 1) { factorization.emplace_back(n, 1); }
   return factorization;
 }
 
-template <typename T, typename ET = ExponentType>
-constexpr const Factorization<T, ET> &factorize(const Factorization<T, ET> &f) {
+template<typename T, typename ET = ExponentType>
+constexpr const Factorization<T, ET> &factorize(const Factorization<T, ET> &f)
+{
   return f;
 }
 
-static_assert(factorize<int, std::uint32_t>(2100) ==
-              std::vector<std::pair<int, std::uint32_t>>{
-                  {2, 2}, {3, 1}, {5, 2}, {7, 1}});
+static_assert(factorize<int, std::uint32_t>(2100)
+              == std::vector<std::pair<int, std::uint32_t>>{ { 2, 2 }, { 3, 1 }, { 5, 2 }, { 7, 1 } });
 
 // for now not mixing factorizations of different types,
 // seems like the safer choice a priori
-template <typename T>
-constexpr Factorization<T> merge_factorizations(const Factorization<T> &left,
-                                                const Factorization<T> &right) {
+template<typename T>
+constexpr Factorization<T> merge_factorizations(const Factorization<T> &left, const Factorization<T> &right)
+{
   Factorization<T> out;
   auto it_left = left.begin();
   auto it_right = right.begin();
@@ -81,8 +75,8 @@ constexpr Factorization<T> merge_factorizations(const Factorization<T> &left,
     } else if (it_left->first > it_right->first) {
       out.push_back(*it_right);
       ++it_right;
-    } else { // ==
-      out.emplace_back({it_left->first, it_left->second + it_right->second});
+    } else {// ==
+      out.emplace_back({ it_left->first, it_left->second + it_right->second });
       ++it_left;
       ++it_right;
     }
@@ -199,4 +193,4 @@ constexpr Factorization<T> merge_factorizations(const Factorization<T> &left,
 //   static_assert(sizeof(T) != sizeof(T), "THIS IS NOT IMPLEMENTED YET; TODO");
 // };
 
-} // namespace ivl::nt
+}// namespace ivl::nt
