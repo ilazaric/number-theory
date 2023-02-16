@@ -14,11 +14,12 @@ struct LazyDefaultTraits {
   using ExponentType = std::uint32_t;
 };
 
+// lazily factorizes and preserves the factorization
 template <typename Traits = LazyDefaultTraits> class Lazy {
 private:
   using ValueType = Traits::ValueType;
   using ExponentType = Traits::ExponentType;
-  using FactorizationType = std::vector<std::pair<ValueType, ExponentType>>;
+  using FactorizationType = Factorization<ValueType, ExponentType>; // std::vector<std::pair<ValueType, ExponentType>>;
 
   ValueType m_value;
   mutable std::optional<FactorizationType> m_factorization;
@@ -84,12 +85,16 @@ public:
 };
 
 // `std::swap`-esque
-// TODO-think: should there be lazy&& version?
-template <typename Traits> auto &&factorize(const Lazy<Traits> &lazy) {
+  // `decltype(auto)` used here bc it does the right thing always
+  // if `get_factorization` returns a value, this returns a value
+  // etc.
+  // also, better than explicitly using `const Lazy<Traits>::FactorizationType&`
+  // bc i might change the code upstream and this could then do stuff i wouldn't intend
+  template <typename Traits> decltype(auto) factorize(const Lazy<Traits> &lazy) {
   return lazy.get_factorization();
 }
 
-template <typename Traits> auto &&value(const Lazy<Traits> &lazy) {
+  template <typename Traits> decltype(auto) value(const Lazy<Traits> &lazy) {
   return lazy.get_value();
 }
 

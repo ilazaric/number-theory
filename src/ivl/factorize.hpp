@@ -6,6 +6,8 @@
 
 namespace ivl::nt {
 
+// this comment is becoming more and more outdated
+//
 // this could be a template parameter to everything
 // currently i can't imagine a (reasonable) case where 32bit integer
 // wouldn't be the correct choice
@@ -18,11 +20,25 @@ using ExponentType = std::uint32_t;
 
 // TODO-think: is `std::vector` the best choice for the factorization?
 // no idea, it probably should be customizable, whatever for now
-template <typename T>
-using Factorization = std::vector<std::pair<T, ExponentType>>;
+  // TODO: make this a wrapper around `std::vector`, this is prone to bugs:
+  // Factorization<T> f{100}; <-- doesn't do what a lot of people would think
+  template <typename T, typename ET = ExponentType>
+using Factorization = std::vector<std::pair<T, ET>>;
 
-template <typename T> constexpr Factorization<T> factorize(T n) {
-  Factorization<T> factorization;
+  class ZeroFactorizationException : public std::exception {
+  public:
+    virtual const char* what() const noexcept override {
+      return "tried to factorize 0 (zero)";
+    }
+  };
+
+  template <typename T, typename ET = ExponentType> constexpr Factorization<T, ET> factorize(T n) {
+    // we could wrap 0 with T{} but this could be better,
+    // if the type implements heterogenous comparison
+    if (n < 0) n = -n;
+    // this could be moved into a contract if those existed in C++
+    if (n == 0) throw ZeroFactorizationException{};
+    Factorization<T, ET> factorization;
   for (T p = 2; p * p <= n; ++p) {
     if (n % p == 0) {
       factorization.emplace_back(p, 0);
@@ -38,12 +54,12 @@ template <typename T> constexpr Factorization<T> factorize(T n) {
   return factorization;
 }
 
-template <typename T>
-constexpr const Factorization<T> &factorize(const Factorization<T> &f) {
+  template <typename T, typename ET = ExponentType>
+  constexpr const Factorization<T, ET> &factorize(const Factorization<T, ET> &f) {
   return f;
 }
 
-static_assert(factorize<int>(2100) ==
+  static_assert(factorize<int, std::uint32_t>(2100) ==
               std::vector<std::pair<int, std::uint32_t>>{
                   {2, 2}, {3, 1}, {5, 2}, {7, 1}});
 

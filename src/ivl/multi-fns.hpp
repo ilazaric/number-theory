@@ -33,7 +33,7 @@ constexpr auto multiplicative_completion =
 } // namespace compiletime
 
 constexpr auto tau_compiletime =
-    compiletime::multiplicative_completion<[](auto p, auto e) {
+    compiletime::multiplicative_completion<[](auto, auto e) {
       return e + 1;
     }>;
 
@@ -52,7 +52,7 @@ constexpr auto multiplicative_completion(auto &&callable) {
 } // namespace runtime
 
 constexpr auto tau_runtime =
-    runtime::multiplicative_completion([](auto p, auto e) { return e + 1; });
+    runtime::multiplicative_completion([](auto, auto e) { return e + 1; });
 static_assert(test_equality(tau_compiletime, tau_runtime, 100));
 
 namespace compiletime {
