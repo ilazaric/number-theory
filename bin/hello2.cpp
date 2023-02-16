@@ -1,7 +1,7 @@
 #include <ivl/divisors.hpp>
 #include <ivl/factorize.hpp>
-#include <ivl/multi-fns.hpp>
 #include <ivl/lazy.hpp>
+#include <ivl/multi-fns.hpp>
 
 #include <iostream>
 
@@ -32,7 +32,7 @@ int main() {
   std::cout << ivl::nt::sigma_compiletime(2) << std::endl;
   std::cout << ivl::nt::sigma_dirichlet(2) << std::endl;
   exit(0);
-  
+
   std::uint32_t n;
   while (std::cin >> n) {
     ivl::nt::Lazy lazy{n};
@@ -53,16 +53,18 @@ int main() {
     // ") -- " << ivl::nt::tau_v1(n) << std::endl; std::cout << "tau(" << n <<
     // ") -- " << ivl::nt::tau_v2(f, ivl::nt::factorization_tag{}) << std::endl;
     // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v2(n) << std::endl;
-    std::cout << "tau(" << n << ") -- " << tau_regular(factorize(lazy)) << std::endl;
+    std::cout << "tau(" << n << ") -- " << tau_regular(factorize(lazy))
+              << std::endl;
     // std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v3<std::uint32_t>(f)
     // << std::endl; std::cout << "tau(" << n << ") -- " << ivl::nt::tau_v4(f)
     // << std::endl;
-    std::cout << "tau(" << n << ") -- " << ivl::nt::tau_compiletime(factorize(lazy))
+    std::cout << "tau(" << n << ") -- "
+              << ivl::nt::tau_compiletime(factorize(lazy)) << std::endl;
+    std::cout << "tau(" << n << ") -- " << ivl::nt::tau_runtime(factorize(lazy))
               << std::endl;
-    std::cout << "tau(" << n << ") -- " << ivl::nt::tau_runtime(factorize(lazy)) << std::endl;
-    std::cout << "tau(" << n << ") -- " << ivl::nt::tau_dirichlet(factorize(lazy))
-              << std::endl;
+    std::cout << "tau(" << n << ") -- "
+              << ivl::nt::tau_dirichlet(factorize(lazy)) << std::endl;
   }
-  
+
   return 0;
 }

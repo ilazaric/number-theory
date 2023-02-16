@@ -11,24 +11,25 @@
 
 namespace ivl::nt {
 
-  // multiplicative functions with argument of type T
-  // return this type
-  // probably not perfect for every case but should be okay in general
-  template<typename T>
-  using ReturnType = std::remove_cvref_t<decltype(factorize(std::declval<T>()).front().first)>;
+// multiplicative functions with argument of type T
+// return this type
+// probably not perfect for every case but should be okay in general
+template <typename T>
+using ReturnType =
+    std::remove_cvref_t<decltype(factorize(std::declval<T>()).front().first)>;
 
 namespace compiletime {
 template <auto callable>
 constexpr auto multiplicative_completion =
-    []<typename T>(T&& arg) -> ReturnType<T> {
+    []<typename T>(T &&arg) -> ReturnType<T> {
   // TODO: check if correct
-      decltype(auto) factorization = factorize(arg);
-      ReturnType<T> out{1};
-      for (auto [p, e] : factorization) {
-        out *= callable(p, e);
-      }
-      return out;
-    };
+  decltype(auto) factorization = factorize(arg);
+  ReturnType<T> out{1};
+  for (auto [p, e] : factorization) {
+    out *= callable(p, e);
+  }
+  return out;
+};
 } // namespace compiletime
 
 constexpr auto tau_compiletime =
@@ -39,7 +40,7 @@ constexpr auto tau_compiletime =
 namespace runtime {
 constexpr auto multiplicative_completion(auto &&callable) {
   return [callable = std::forward<decltype(callable)>(callable)]<typename T>(
-             T&& arg) -> ReturnType<T> {
+             T &&arg) -> ReturnType<T> {
     decltype(auto) factorization = factorize(arg);
     ReturnType<T> out{1};
     for (auto [p, e] : factorization) {
@@ -52,40 +53,39 @@ constexpr auto multiplicative_completion(auto &&callable) {
 
 constexpr auto tau_runtime =
     runtime::multiplicative_completion([](auto p, auto e) { return e + 1; });
-static_assert(test_equality(tau_compiletime,
-                                                          tau_runtime, 100));
+static_assert(test_equality(tau_compiletime, tau_runtime, 100));
 
 namespace compiletime {
 template <auto left, auto right>
 constexpr auto dirichlet_convolution =
-    []<typename T>(T&& arg) -> ReturnType<T> {
-      decltype(auto) factorization = factorize(arg);
-      auto left_div = factorization;
-      auto right_div = factorization;
-      for (auto &[p, e] : left_div) {
-        e = 0;
+    []<typename T>(T &&arg) -> ReturnType<T> {
+  decltype(auto) factorization = factorize(arg);
+  auto left_div = factorization;
+  auto right_div = factorization;
+  for (auto &[p, e] : left_div) {
+    e = 0;
+  }
+  ReturnType<T> out{0};
+  while (true) {
+    out += left(left_div) * right(right_div);
+    std::size_t i = 0;
+    // TODO: this feels like it can be improved
+    for (; i < factorization.size(); ++i) {
+      if (right_div[i].second == 0) {
+        left_div[i].second = 0;
+        right_div[i].second = factorization[i].second;
+      } else {
+        ++left_div[i].second;
+        --right_div[i].second;
+        break;
       }
-      ReturnType<T> out{0};
-      while (true) {
-        out += left(left_div) * right(right_div);
-        std::size_t i = 0;
-        // TODO: this feels like it can be improved
-        for (; i < factorization.size(); ++i) {
-          if (right_div[i].second == 0) {
-            left_div[i].second = 0;
-            right_div[i].second = factorization[i].second;
-          } else {
-            ++left_div[i].second;
-            --right_div[i].second;
-            break;
-          }
-        }
-        if (i == factorization.size()) {
-          break;
-        }
-      }
-      return out;
-    };
+    }
+    if (i == factorization.size()) {
+      break;
+    }
+  }
+  return out;
+};
 } // namespace compiletime
 
 // implemented as a lambda so i can manipulate the object
@@ -127,9 +127,9 @@ constexpr auto sigma_compiletime =
 
 // TODO-think: should it be T&& ?
 // the compiler is ~probably~ smart enough to not copy
-  constexpr auto one = []<typename T>(T) -> ReturnType<T> { return 1; };
-constexpr auto id = []<typename T>(T&& arg) -> ReturnType<T> {
-  if constexpr (std::is_same_v<ReturnType<T>, std::remove_cvref_t<T>>){
+constexpr auto one = []<typename T>(T) -> ReturnType<T> { return 1; };
+constexpr auto id = []<typename T>(T &&arg) -> ReturnType<T> {
+  if constexpr (std::is_same_v<ReturnType<T>, std::remove_cvref_t<T>>) {
     return arg;
   } else {
     ReturnType<T> out{1};
@@ -141,7 +141,7 @@ constexpr auto id = []<typename T>(T&& arg) -> ReturnType<T> {
 };
 
 // this is the neutral element with respect to the dirichlet convolution
-constexpr auto epsilon = []<typename T>(T&& arg) -> ReturnType<T> {
+constexpr auto epsilon = []<typename T>(T &&arg) -> ReturnType<T> {
   return id(arg) == 1 ? 1 : 0;
 };
 static_assert(test_equality(
@@ -149,16 +149,12 @@ static_assert(test_equality(
     compiletime::dirichlet_convolution<sigma_compiletime, epsilon>, 100));
 
 constexpr auto tau_dirichlet = compiletime::dirichlet_convolution<one, one>;
-static_assert(test_equality(tau_compiletime,
-                                                          tau_dirichlet, 100));
+static_assert(test_equality(tau_compiletime, tau_dirichlet, 100));
 
 constexpr auto sigma_dirichlet = compiletime::dirichlet_convolution<one, id>;
-static_assert(test_equality(sigma_compiletime,
-                                                          sigma_dirichlet,
-                                                          100));
+static_assert(test_equality(sigma_compiletime, sigma_dirichlet, 100));
 
 constexpr auto id_compiletime = compiletime::multiplicative_completion<pow>;
-static_assert(test_equality(id_compiletime, id,
-                                                          100));
+static_assert(test_equality(id_compiletime, id, 100));
 
 } // namespace ivl::nt
