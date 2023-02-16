@@ -21,7 +21,7 @@ using ExponentType = std::uint32_t;
 // TODO-think: is `std::vector` the best choice for the factorization?
 // no idea, it probably should be customizable, whatever for now
 // TODO: make this a wrapper around `std::vector`, this is prone to bugs:
-// Factorization<T> f{100}; <-- doesn't do what a lot of people would think
+// Factorization<int> f{100}; <-- doesn't do what a lot of people would think
 template <typename T, typename ET = ExponentType>
 using Factorization = std::vector<std::pair<T, ET>>;
 
