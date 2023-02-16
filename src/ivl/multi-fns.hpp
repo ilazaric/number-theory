@@ -117,7 +117,7 @@ constexpr auto powsum = []<typename T>(T n, std::uint32_t e) -> T {
   if (n == 1)
     return e + 1;
   T tmp = ::ivl::nt::pow(n, e);
-  // TODO: the inner-most -1 is kinda not needed?
+  // TODO: the -1 in the numerator is kinda not needed?
   // should i remove it?
   return (tmp - 1) / (n - 1) + tmp;
 };
