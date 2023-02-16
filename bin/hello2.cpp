@@ -28,6 +28,10 @@ std::ostream &operator<<(std::ostream &out, const std::vector<T> &vec) {
 
 int main() {
   using ::ivl::nt::factorize;
+
+  std::cout << ivl::nt::sigma_compiletime(2) << std::endl;
+  std::cout << ivl::nt::sigma_dirichlet(2) << std::endl;
+  exit(0);
   
   std::uint32_t n;
   while (std::cin >> n) {

@@ -38,6 +38,11 @@ template <typename T> constexpr Factorization<T> factorize(T n) {
   return factorization;
 }
 
+  template<typename T>
+  constexpr const Factorization<T>& factorize(const Factorization<T>& f){
+    return f;
+  }
+
 static_assert(factorize<int>(2100) ==
               std::vector<std::pair<int, std::uint32_t>>{
                   {2, 2}, {3, 1}, {5, 2}, {7, 1}});
