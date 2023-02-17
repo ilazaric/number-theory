@@ -19,8 +19,8 @@ template<typename VT = std::int64_t> struct LazyDefaultTraits
 template<typename Traits = LazyDefaultTraits<>> class Lazy
 {
 private:
-  using ValueType = Traits::ValueType;
-  using ExponentType = Traits::ExponentType;
+  using ValueType = typename Traits::ValueType;
+  using ExponentType = typename Traits::ExponentType;
   using FactorizationType = Factorization<ValueType, ExponentType>;// std::vector<std::pair<ValueType,
                                                                    // ExponentType>>;
 

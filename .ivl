@@ -1,4 +1,4 @@
-ivl_add_command "init" "mkdir -p $IVL_DOT_LOCATION/build && CC=gcc-12 CXX=g++-12 cmake -S $IVL_DOT_LOCATION -B $IVL_DOT_LOCATION/build -DCMAKE_BUILD_TYPE=Release"
-ivl_add_command "init-clang" "mkdir -p $IVL_DOT_LOCATION/build && CC=clang-15 CXX=clang-15 cmake -S $IVL_DOT_LOCATION -B $IVL_DOT_LOCATION/build -DCMAKE_BUILD_TYPE=Release"
+ivl_add_command "init" "rm -rf $IVL_DOT_LOCATION/build && mkdir -p $IVL_DOT_LOCATION/build && CC=gcc-12 CXX=g++-12 cmake -S $IVL_DOT_LOCATION -B $IVL_DOT_LOCATION/build -DCMAKE_BUILD_TYPE=Release"
+ivl_add_command "init-clang" "rm -rf $IVL_DOT_LOCATION/build && mkdir -p $IVL_DOT_LOCATION/build && CC=clang-15 CXX=clang++-15 cmake -S $IVL_DOT_LOCATION -B $IVL_DOT_LOCATION/build -DCMAKE_BUILD_TYPE=Release"
 ivl_add_command "build" "cmake --build $IVL_DOT_LOCATION/build"
 ivl_add_command "rebuild" "cmake --build $IVL_DOT_LOCATION/build --verbose --clean-first"

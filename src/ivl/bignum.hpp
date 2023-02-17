@@ -6,8 +6,6 @@
 
 namespace ivl::nt {
 
-std::strong_ordering reverse_order(std::strong_ordering arg) { return 0 <=> arg; }
-
 // `T` should be chosen such that the expression:
 // `Base * Base`
 // fits entirely in `T`, no overflow
@@ -49,7 +47,10 @@ public:
     T carry{ 0 };
     std::size_t limit = std::min(this->m_digits.size(), arg.m_digits.size());
 
-    this->m_digits.insert(this->m_digits.end(), arg.m_digits.begin() + limit, arg.m_digits.end());
+    // `clang++-15 -Wsign-conversion`
+    this->m_digits.insert(this->m_digits.end(),
+      arg.m_digits.begin() + static_cast<typename std::vector<T>::iterator::difference_type>(limit),
+      arg.m_digits.end());
 
     std::size_t i = 0;
     for (; i < limit; ++i) {
@@ -228,7 +229,8 @@ public:
   {
     for (std::size_t i = 0; i < arg.m_digits.size(); ++i) {
       if (i) out << '_';
-      out << arg.m_digits.rbegin()[i];
+      // `clang++-15 -Wsign-conversion` forces me to do this
+      out << arg.m_digits.rbegin()[static_cast<typename std::vector<T>::iterator::difference_type>(i)];
     }
     return out;
   }
@@ -290,7 +292,7 @@ public:
     if (this->is_positive()) {
       return cmp;
     } else {
-      return reverse_order(cmp);
+      return 0 <=> cmp;
     }
   }
 

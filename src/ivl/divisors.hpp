@@ -36,7 +36,7 @@ public:
   friend class Iterator;
 
   Iterator begin() const { return Iterator{ *this }; }
-  Iterator end() const { return Iterator::end; }
+  Iterator end() const { return Iterator{}; }
 
   // TODO: iterator_tag stuff
   class Iterator
@@ -49,11 +49,9 @@ public:
     // instead of [[p1, e2], [p2, e2], ...]
     Factorization<T> divisor;
 
-    // to construct `end` singleton
-    Iterator() : factorization(nullptr), divisor() {}
-
   public:
-    inline static const Iterator end;
+    // to construct `end`
+    Iterator() : factorization(nullptr), divisor() {}
 
     explicit Iterator(const DivisorIterable &parent)
       : factorization(&(parent.factorization.get())), divisor(*factorization)
@@ -88,5 +86,7 @@ public:
     }
   };
 };
+
+template<typename T> DivisorIterable(const Factorization<T> &) -> DivisorIterable<T>;
 
 }// namespace ivl::nt
