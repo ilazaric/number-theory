@@ -8,6 +8,11 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   add_compile_options(-fimplicit-constexpr) # everything is constexpr :D
   add_compile_options(-fconcepts-diagnostics-depth=3) # damn concept errors are somehow worse than tmp errors
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  # removed Wpadded bc of course padding happens
+  # removed Wc++98-compat bc nobody cares
+  # removed Wzero-as-null-pointer-constant bc its broken with the spaceship (<=>) operator
+  # don't quite remember why i removed Wweak-vtables
+  # * it yells at me about custom exceptions, dont see the issue atm
   add_compile_options(-Weverything -Wno-c++98-compat -Wno-weak-vtables -Wno-zero-as-null-pointer-constant -Wno-padded)
 endif()
 
