@@ -1,4 +1,31 @@
-ivl_add_command "init" "rm -rf $IVL_DOT_LOCATION/build/{CMakeFiles,CMakeCache.txt} && mkdir -p $IVL_DOT_LOCATION/build && CC=gcc-12 CXX=g++-12 cmake -S $IVL_DOT_LOCATION -B $IVL_DOT_LOCATION/build -DCMAKE_BUILD_TYPE=Release"
-ivl_add_command "init-clang" "rm -rf $IVL_DOT_LOCATION/build/{CMakeFiles,CMakeCache.txt} && mkdir -p $IVL_DOT_LOCATION/build && CC=clang-15 CXX=clang++-15 cmake -S $IVL_DOT_LOCATION -B $IVL_DOT_LOCATION/build -DCMAKE_BUILD_TYPE=Release"
-ivl_add_command "build" "cmake --build $IVL_DOT_LOCATION/build"
-ivl_add_command "rebuild" "cmake --build $IVL_DOT_LOCATION/build --verbose --clean-first"
+function find_builds(){
+  ls $LOC/build | grep -E "${1:-*}"
+}
+
+function init(){
+  rm -rf $LOC/build
+  mkdir -p $LOC/build/{gcc,clang}
+  CC=gcc-12 CXX=g++-12 cmake -S $LOC -B $LOC/build/gcc -DCMAKE_BUILD_TYPE=Release
+  CC=clang-15 CXX=clang++-15 cmake -S $LOC -B $LOC/build/clang -DCMAKE_BUILD_TYPE=Release
+}
+
+function build(){
+  for dir in $(find_builds "$@")
+  do
+    echo "[IVL]: dir found: $dir"
+    cmake --build $LOC/build/$dir
+  done
+}
+
+function rebuild(){
+  for dir in $(find_builds "$@")
+  do
+    echo "[IVL]: dir found: $dir"
+    cmake --build $LOC/build/$dir --verbose --clean-first
+  done
+}
+
+ivl_add_command "init" "LOC=\"$IVL_DOT_LOCATION\" init"
+ivl_add_command "list" "LOC=\"$IVL_DOT_LOCATION\" find_builds"
+ivl_add_command "build" "LOC=\"$IVL_DOT_LOCATION\" build"
+ivl_add_command "rebuild" "LOC=\"$IVL_DOT_LOCATION\" rebuild"
