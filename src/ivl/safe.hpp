@@ -36,6 +36,7 @@ private:
   T m_data;
 
 public:
+  // TODO-think: implicit casts could be nasty here
   constexpr Safe(T data) : m_data(data) {}
   constexpr Safe() : m_data{} {}
 

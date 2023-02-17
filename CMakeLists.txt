@@ -4,6 +4,7 @@ project(number-theory LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 add_compile_options(-Wshadow -Wnon-virtual-dtor -pedantic)
+add_compile_options(-fimplicit-constexpr) # everything is constexpr :D
 
 # add_library(project_options INTERFACE)
 
