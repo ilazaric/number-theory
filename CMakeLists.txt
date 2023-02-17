@@ -14,3 +14,6 @@ target_link_libraries(hello PRIVATE ivl)
 
 add_executable(hello2 bin/hello2.cpp)
 target_link_libraries(hello2 PRIVATE ivl)
+
+add_executable(hello3 bin/hello3.cpp)
+target_link_libraries(hello3 PRIVATE ivl)
