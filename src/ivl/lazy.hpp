@@ -9,14 +9,14 @@
 namespace ivl::nt {
 
 // TODO: custom factorize strategy
-struct LazyDefaultTraits
+template<typename VT = std::int64_t> struct LazyDefaultTraits
 {
-  using ValueType = std::int64_t;
+  using ValueType = VT;
   using ExponentType = std::uint32_t;
 };
 
 // lazily factorizes and preserves the factorization
-template<typename Traits = LazyDefaultTraits> class Lazy
+template<typename Traits = LazyDefaultTraits<>> class Lazy
 {
 private:
   using ValueType = Traits::ValueType;
@@ -90,6 +90,11 @@ public:
 
   ValueType get_value() const { return m_value; }
 };
+
+template<typename VT, typename Traits = LazyDefaultTraits<VT>> Lazy<Traits> make_lazy(VT arg)
+{
+  return Lazy<Traits>{ arg };
+}
 
 // `std::swap`-esque
 // `decltype(auto)` used here bc it does the right thing always

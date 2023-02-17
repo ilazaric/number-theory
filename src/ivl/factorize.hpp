@@ -32,22 +32,20 @@ public:
 
 template<typename T, typename ET = ExponentType> constexpr Factorization<T, ET> factorize(T n)
 {
-  // we could wrap 0 with T{} but this could be better,
-  // if the type implements heterogenous comparison
-  if (n < 0) n = -n;
+  if (n < T{ 0 }) n = -n;
   // this could be moved into a contract if those existed in C++
-  if (n == 0) throw ZeroFactorizationException{};
+  if (n == T{ 0 }) throw ZeroFactorizationException{};
   Factorization<T, ET> factorization;
-  for (T p = 2; p * p <= n; ++p) {
-    if (n % p == 0) {
+  for (T p{ 2 }; p * p <= n; ++p) {
+    if (n % p == T{ 0 }) {
       factorization.emplace_back(p, 0);
-      while (n % p == 0) {
+      while (n % p == T{ 0 }) {
         n /= p;
         ++factorization.back().second;
       }
     }
   }
-  if (n != 1) { factorization.emplace_back(n, 1); }
+  if (n != T{ 1 }) { factorization.emplace_back(n, 1); }
   return factorization;
 }
 

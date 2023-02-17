@@ -2,6 +2,7 @@
 #include <ivl/factorize.hpp>
 #include <ivl/lazy.hpp>
 #include <ivl/multi-fns.hpp>
+#include <ivl/safe.hpp>
 
 #include <iostream>
 
@@ -20,9 +21,10 @@ int main()
 {
   using ::ivl::nt::factorize;
 
-  std::uint32_t n;
-  while (std::cin >> n) {
-    ivl::nt::Lazy lazy{ n };
+  std::uint32_t _n;
+  while (std::cin >> _n) {
+    ivl::nt::Safe<std::uint32_t> n{ _n };
+    auto lazy = make_lazy(n);
 
     std::cout << "fact(" << n << ") -- ";
     for (auto [p, e] : factorize(lazy)) std::cout << p << "^" << e << " ";
