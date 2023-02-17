@@ -2,23 +2,15 @@
 
 #include <compare>
 #include <ostream>
+#include <vector>
 
 namespace ivl::nt {
 
-std::strong_ordering reverse_order(std::strong_ordering arg)
-{
-  return 0 <=> arg;
-  // if (arg == std::strong_ordering::less)
-  //   return std::strong_ordering::greater;
-  // if (arg == std::strong_ordering::greater)
-  //   return std::strong_ordering::less;
-  // return std::strong_ordering::equal;
-}
+std::strong_ordering reverse_order(std::strong_ordering arg) { return 0 <=> arg; }
 
 // `T` should be chosen such that the expression:
 // `Base * Base`
 // fits entirely in `T`, no overflow
-// TODO: static_assert ^
 
 // all operations on this have to remain nonnegative
 // as in, UnsignedBignum - BiggerUnsignedBignum = throw
@@ -35,16 +27,14 @@ public:
   std::strong_ordering operator<=>(const UnsignedBignum &arg) const
   {
     std::strong_ordering result = std::strong_ordering::equal;
-    if (result = std::strong_order(this->m_digits.size(), arg.m_digits.size()); result != std::strong_ordering::equal) {
+    if (result = this->m_digits.size() <=> arg.m_digits.size(); result != std::strong_ordering::equal) {
       return result;
     }
 
     std::size_t i = this->m_digits.size();
     while (i) {
       --i;
-      if (result = std::strong_order(this->m_digits[i], arg.m_digits[i]); result != std::strong_ordering::equal) {
-        return result;
-      }
+      if (result = this->m_digits[i] <=> arg.m_digits[i]; result != std::strong_ordering::equal) { return result; }
     }
 
     return std::strong_ordering::equal;// == result
@@ -294,9 +284,9 @@ public:
 
   std::strong_ordering operator<=>(const SignedWrapper &arg) const
   {
-    if (this->m_sign != arg.m_sign) { return std::strong_order(this->m_sign, arg.m_sign); }
+    if (this->m_sign != arg.m_sign) { return this->m_sign <=> arg.m_sign; }
     if (this->is_zero()) { return std::strong_ordering::equal; }
-    std::strong_ordering cmp = std::strong_order(this->m_abs, arg.m_abs);
+    std::strong_ordering cmp = this->m_abs <=> arg.m_abs;
     if (this->is_positive()) {
       return cmp;
     } else {
@@ -328,7 +318,7 @@ public:
       return *this;
     }
 
-    std::strong_ordering cmp = std::strong_order(this->m_abs, arg.m_abs);
+    std::strong_ordering cmp = this->m_abs <=> arg.m_abs;
     if (cmp == std::strong_ordering::less) {
       T tmp{ std::move(this->m_abs) };
       this->m_abs = arg.m_abs;
@@ -361,7 +351,7 @@ public:
       return *this;
     }
 
-    std::strong_ordering cmp = std::strong_order(this->m_abs, arg.m_abs);
+    std::strong_ordering cmp = this->m_abs <=> arg.m_abs;
     if (cmp == std::strong_ordering::less) {
       T tmp{ std::move(this->m_abs) };
       this->m_abs = arg.m_abs;
