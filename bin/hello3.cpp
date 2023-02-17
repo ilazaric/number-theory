@@ -1,3 +1,4 @@
+#include <ivl/bignum.hpp>
 #include <ivl/divisors.hpp>
 #include <ivl/factorize.hpp>
 #include <ivl/lazy.hpp>
@@ -22,8 +23,26 @@ int main()
 {
   using ::ivl::nt::factorize;
 
-  std::int64_t n;
-  while (std::cin >> n) { std::cout << ivl::nt::pollard_rho::magic_algo<std::int64_t>(n, 2) << std::endl; }
+  // using Bignum = ivl::nt::UnsignedBignum<std::uint32_t, 10>;
+  using Bignum = ivl::nt::Bignum<std::uint32_t, 10>;
+
+  // static_assert(std::three_way_comparable<Bignum>);
+
+  std::int64_t a, b;
+  while (std::cin >> a >> b) {
+    Bignum x{ a }, y{ b };
+    std::cout << x << " + " << y << " == " << x + y << std::endl;
+    std::cout << x << " - " << y << " == " << x - y << std::endl;
+    std::cout << x << " * " << y << " == " << x * y << std::endl;
+    std::cout << x << " / " << y << " == " << x / y << std::endl;
+    std::cout << x << " / " << y << " == " << x % y << std::endl;
+    // std::cout << x << " < " << y << " == " << (x<y) << std::endl;
+    // std::cout << x << " > " << y << " == " << (x>y) << std::endl;
+    // std::cout << x << " <= " << y << " == " << (x<=y) << std::endl;
+    // std::cout << x << " >= " << y << " == " << (x>=y) << std::endl;
+    // std::cout << x << " == " << y << " == " << (x==y) << std::endl;
+    // std::cout << x << " != " << y << " == " << (x!=y) << std::endl;
+  }
 
   return 0;
 }
