@@ -167,12 +167,20 @@ template<typename T> void test1()
   }
 }
 
+template<typename T> void multitest()
+{
+  test_add<T>();
+  test_sub<T>();
+  test_mul<T>();
+  test_div<T>();
+  test1<T>();
+}
+
 int main()
 {
-  test_add<ivl::nt::Bignum<std::int32_t, 10>>();
-  test_sub<ivl::nt::Bignum<std::int32_t, 10>>();
-  test_mul<ivl::nt::Bignum<std::int32_t, 10>>();
-  test_div<ivl::nt::Bignum<std::int32_t, 10>>();
-  test1<ivl::nt::Bignum<std::int32_t, 10>>();
+  multitest<ivl::nt::Bignum<std::int32_t, 10>>();
+  multitest<ivl::nt::Bignum<std::int32_t, 10000>>();
+  // multitest<ivl::nt::Bignum<std::int16_t, 10>>();
+  multitest<ivl::nt::Bignum<std::int32_t, 2>>();
   return 0;
 }
