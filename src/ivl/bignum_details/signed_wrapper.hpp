@@ -1,6 +1,7 @@
 #pragma once
 
 #include <compare>
+#include <ostream>
 
 namespace ivl::nt {
 
