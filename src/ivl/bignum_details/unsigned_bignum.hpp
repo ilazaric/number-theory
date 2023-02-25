@@ -139,7 +139,7 @@ public:
         std::size_t current = i + j;
         T carry = this->m_digits[i] * arg.m_digits[j];
         while (carry) {
-          if (current == tmp.size()) tmp.emplace_back();
+          // if (current == tmp.size()) tmp.emplace_back();
           carry += tmp[current];
           tmp[current] = carry % Base;
           carry /= Base;
