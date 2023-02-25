@@ -23,6 +23,8 @@ add_executable(hello bin/hello.cpp)
 add_executable(hello2 bin/hello2.cpp)
 add_executable(hello3 bin/hello3.cpp)
 
+add_executable(ptest perftest/test.cpp)
+
 enable_testing()
 add_executable(Test test/test.cpp)
 target_compile_options(Test PRIVATE -fsanitize=address)
