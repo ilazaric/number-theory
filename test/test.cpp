@@ -97,9 +97,9 @@ template<typename T> T complicated_expression()
   // T a{10};
   // T b{0};
   // T c{1};
-  T a{ 1000 };
-  T b{ 0 };
-  T c{ 3921 };
+  T a{ 12901 };
+  T b{ 39223 };
+  T c{ 910129 };
   for (std::uint32_t i = 0; i < 20; ++i) {
     c = c * a + b;
     std::cout << "c[" << i << "]: " << c << std::endl;
