@@ -1,6 +1,7 @@
 #pragma once
 
 #include <compare>
+#include <iostream>
 #include <ostream>
 #include <vector>
 
@@ -44,6 +45,7 @@ public:
 
   UnsignedBignum &operator+=(const UnsignedBignum &arg)
   {
+    // std::cout << "+ enter +=" << std::endl;
     T carry{ 0 };
     std::size_t limit = std::min(this->m_digits.size(), arg.m_digits.size());
 
@@ -67,6 +69,7 @@ public:
 
     for (; carry && i < this->m_digits.size(); ++i) {
       ++this->m_digits[i];
+      carry = 0;
       if (this->m_digits[i] == Base) {
         this->m_digits[i] = 0;
         carry = 1;
@@ -75,6 +78,7 @@ public:
 
     if (carry) { this->m_digits.emplace_back(carry); }
 
+    // std::cout << "- exit +=" << std::endl;
     return *this;
   }
 
@@ -97,6 +101,8 @@ public:
   UnsignedBignum &operator-=(const UnsignedBignum &arg)
   {
     if (*this < arg) { throw SubInvalidException{}; }
+
+    // std::cout << "+ enter -=" << std::endl;
 
     T carry{ 0 };
     for (std::size_t i = 0; i < arg.m_digits.size(); ++i) {
@@ -122,6 +128,7 @@ public:
 
     while (!this->m_digits.empty() && this->m_digits.back() == T{ 0 }) { this->m_digits.pop_back(); }
 
+    // std::cout << "- exit -=" << std::endl;
     return *this;
   }
 
@@ -138,18 +145,21 @@ public:
     if (arg.m_digits.empty()) { this->m_digits.clear(); }
     if (this->m_digits.empty()) { return *this; }
 
+    // std::cout << "+ enter *=" << std::endl;
+    // std::cout << "this == " << *this << std::endl;
+    // std::cout << "arg  == " << arg << std::endl;
+
     std::vector<T> tmp(this->m_digits.size() + arg.m_digits.size());
-    for (std::size_t diag = 0; diag + 1 < this->m_digits.size() + arg.m_digits.size(); ++diag) {
-      for (std::size_t i = diag < arg.m_digits.size() ? 0 : diag + 1 - arg.m_digits.size(),
-                       j = diag - i,
-                       limit = std::min(this->m_digits.size(), diag + 1);
-           i < limit;
-           ++i, --j) {
-        T current = this->m_digits[i] * arg.m_digits[j];
-        for (std::size_t index = diag; current; ++index, current /= Base) {
-          if (tmp.size() == index) { tmp.emplace_back(T{}); }
-          current += tmp[index];
-          tmp[index] = current % Base;
+    for (std::size_t i = 0; i < this->m_digits.size(); ++i) {
+      for (std::size_t j = 0; j < arg.m_digits.size(); ++j) {
+        std::size_t current = i + j;
+        T carry = this->m_digits[i] * arg.m_digits[j];
+        while (carry) {
+          if (current == tmp.size()) tmp.emplace_back();
+          carry += tmp[current];
+          tmp[current] = carry % Base;
+          carry /= Base;
+          ++current;
         }
       }
     }
@@ -157,6 +167,7 @@ public:
     while (tmp.back() == T{}) tmp.pop_back();
 
     this->m_digits = std::move(tmp);
+    // std::cout << "- exit *=" << std::endl;
     return *this;
   }
 
@@ -180,32 +191,49 @@ public:
       throw 12;// TODO
     }
 
+    std::cout << "+ enter /=" << std::endl;
+    std::cout << "lhs == " << *this << std::endl;
+    std::cout << "rhs == " << arg << std::endl;
+
     UnsignedBignum acc;
     acc.m_digits.resize(this->m_digits.size() - arg.m_digits.size() + 1);
+    std::cout << "len: " << acc.m_digits.size() << std::endl;
     for (std::size_t shift = this->m_digits.size() - arg.m_digits.size(); shift != static_cast<std::size_t>(-1);
          --shift) {
-      T lo{ 0 }, hi{ Base - 1 };
-      for (T mid{ (lo + hi + 1) / 2 }; lo != hi; mid = (lo + hi + 1) / 2) {
+      auto generate_guess = [&arg, shift](T x) {
+        if (x == T{}) return UnsignedBignum{};
         UnsignedBignum tmp;
-        tmp.m_digits = { mid };
+        tmp.m_digits = { x };
         tmp *= arg;
         tmp.m_digits.insert(tmp.m_digits.begin(), shift, T{});
+        return tmp;
+      };
+
+      T lo{ 0 }, hi{ Base - 1 };
+      for (T mid{ (lo + hi + 1) / 2 }; lo != hi; mid = (lo + hi + 1) / 2) {
+        // std::cout << "start iter" << std::endl;
+        UnsignedBignum tmp = generate_guess(mid);
         if (tmp <= *this)
           lo = mid;
         else
           hi = mid - 1;
+        // std::cout << "end iter" << std::endl;
+      }
+      if (*this >= generate_guess(lo + 1) || *this < generate_guess(lo)) {
+        throw 101;// TODO
       }
       if (lo) {
-        UnsignedBignum tmp;
-        tmp.m_digits = { lo };
-        tmp *= arg;
-        tmp.m_digits.insert(tmp.m_digits.begin(), shift, T{});
+        // std::cout << "bla" << std::endl;
+        UnsignedBignum tmp = generate_guess(lo);
         *this -= tmp;
         acc.m_digits[shift] = lo;
+        // std::cout << "blabla" << std::endl;
       }
     }
 
-    while (acc.m_digits.back() == 0) acc.m_digits.pop_back();
+    while (!acc.m_digits.empty() && acc.m_digits.back() == 0) acc.m_digits.pop_back();
+    std::cout << "out == " << acc << std::endl;
+    std::cout << "- exit /=" << std::endl;
     return *this = acc;
   }
 
@@ -216,7 +244,10 @@ public:
     return out;
   }
 
-  UnsignedBignum &operator%=(const UnsignedBignum &arg) { return *this -= *this / arg * arg; }
+  UnsignedBignum &operator%=(const UnsignedBignum &arg)
+  {// std::cout << ". run %=" << std::endl;
+    return *this -= *this / arg * arg;
+  }
 
   friend UnsignedBignum operator%(const UnsignedBignum &left, const UnsignedBignum &right)
   {
@@ -242,6 +273,15 @@ public:
       arg /= Base;
     }
   }
+
+  template<typename CT> CT get() const
+  {
+    // std::cout << "+ enter get()" << std::endl;
+    CT out{};
+    for (auto it = m_digits.rbegin(); it != m_digits.rend(); ++it) out = out * CT{ Base } + CT{ *it };
+    // std::cout << "- exit get()" << std::endl;
+    return out;
+  }
 };
 
 // creates a signed type from an unsigned one
@@ -260,6 +300,12 @@ private:
 
 public:
   SignedWrapper() : m_sign(Sign::Zero), m_abs() {}
+
+  template<typename CT> CT get() const
+  {
+    CT out = this->m_abs.template get<CT>();
+    return this->is_negative() ? -out : +out;
+  }
 
   template<typename U>
   SignedWrapper(U arg)

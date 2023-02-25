@@ -10,18 +10,32 @@ function init(){
 }
 
 function build(){
-  for dir in $(find_builds "$@")
+  DIR="${1:-*}"
+  shift || :
+  for dir in $(find_builds "$DIR")
   do
     echo "[IVL]: dir found: $dir"
-    cmake --build $LOC/build/$dir
+    cmake --build $LOC/build/$dir "$@"
   done
 }
 
 function rebuild(){
-  for dir in $(find_builds "$@")
+  DIR="${1:-*}"
+  shift || :
+  for dir in $(find_builds "$DIR")
   do
     echo "[IVL]: dir found: $dir"
-    cmake --build $LOC/build/$dir --verbose --clean-first
+    cmake --build $LOC/build/$dir --verbose --clean-first "$@"
+  done
+}
+
+function test(){
+  DIR="${1:-*}"
+  shift || :
+  for dir in $(find_builds "$DIR")
+  do
+    echo "[IVL]: dir found: $dir"
+    ctest --test-dir $LOC/build/$dir "$@"
   done
 }
 
@@ -29,3 +43,4 @@ ivl_add_command "init" "LOC=\"$IVL_DOT_LOCATION\" init"
 ivl_add_command "list" "LOC=\"$IVL_DOT_LOCATION\" find_builds"
 ivl_add_command "build" "LOC=\"$IVL_DOT_LOCATION\" build"
 ivl_add_command "rebuild" "LOC=\"$IVL_DOT_LOCATION\" rebuild"
+ivl_add_command "test" "LOC=\"$IVL_DOT_LOCATION\" test"

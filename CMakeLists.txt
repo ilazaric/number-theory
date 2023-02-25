@@ -19,7 +19,14 @@ endif()
 include_directories(src)
 
 add_executable(hello bin/hello.cpp)
-
 add_executable(hello2 bin/hello2.cpp)
-
 add_executable(hello3 bin/hello3.cpp)
+
+enable_testing()
+add_executable(Test test/test.cpp)
+target_compile_options(Test PRIVATE -fsanitize=address)
+target_link_options(Test PRIVATE -fsanitize=address)
+target_compile_options(Test PRIVATE -fsanitize=undefined)
+target_link_options(Test PRIVATE -fsanitize=undefined)
+add_test(NAME MyTest COMMAND Test)
+
