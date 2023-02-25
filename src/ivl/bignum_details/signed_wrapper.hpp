@@ -2,6 +2,7 @@
 
 #include <compare>
 #include <ostream>
+#include <type_traits>
 
 namespace ivl::nt {
 
@@ -28,12 +29,15 @@ public:
     return this->is_negative() ? -out : +out;
   }
 
+  // use of `std::make_unsigned_t` is a bit annoying
+  // cant specialize it :(
+  // TODO-think
   template<typename U>
   SignedWrapper(U arg)
     : m_sign(arg > U{}   ? Sign::Positive
              : arg < U{} ? Sign::Negative
                          : Sign::Zero),
-      m_abs(arg > U{} ? arg : -arg)
+      m_abs(static_cast<std::make_unsigned_t<U>>(arg > U{} ? arg : -arg))
   {}
 
   friend std::ostream &operator<<(std::ostream &out, const SignedWrapper &arg)

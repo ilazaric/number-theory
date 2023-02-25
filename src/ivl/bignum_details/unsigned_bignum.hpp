@@ -238,7 +238,7 @@ public:
   explicit UnsignedBignum(auto arg)
   {
     while (arg) {
-      this->m_digits.emplace_back(T(arg % Base));
+      this->m_digits.emplace_back(static_cast<T>(arg % Base));
       arg /= Base;
     }
   }
@@ -246,7 +246,8 @@ public:
   template<typename CT> CT get() const
   {
     CT out{};
-    for (auto it = m_digits.rbegin(); it != m_digits.rend(); ++it) out = out * CT{ Base } + CT{ *it };
+    for (auto it = m_digits.rbegin(); it != m_digits.rend(); ++it)
+      out = out * static_cast<CT>(Base) + static_cast<CT>(*it);
     return out;
   }
 };

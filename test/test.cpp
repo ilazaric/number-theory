@@ -55,7 +55,7 @@ template<typename T> void test_div()
   for (std::uint32_t i = 0; i < 2000; ++i) {
     auto a = rand() % 1000000000;
     auto b = rand() % 1000000000;
-    auto c = (std::int64_t)a / b;
+    auto c = a / b;
     T at{ a };
     T bt{ b };
     T ct = at / bt;
@@ -76,7 +76,7 @@ template<typename T> void test_mul()
   for (std::uint32_t i = 0; i < 2000; ++i) {
     auto a = rand() % 1000000000;
     auto b = rand() % 1000000000;
-    auto c = (std::int64_t)a * b;
+    auto c = static_cast<std::int64_t>(a) * b;
     T at{ a };
     T bt{ b };
     T ct = at * bt;
@@ -153,7 +153,7 @@ template<typename T, T Mod> std::ostream &operator<<(std::ostream &out, Mint<T, 
 
 template<typename T> void test1()
 {
-  constexpr std::int64_t P = 102931;
+  constexpr std::uint64_t P = 102931;
   // constexpr std::int64_t P = std::numeric_limits<std::int64_t>::max();
   auto a = complicated_expression<Mint<std::int64_t, P>>();
   auto b = complicated_expression<T>();
@@ -182,5 +182,9 @@ int main()
   multitest<ivl::nt::Bignum<std::int32_t, 10000>>();
   // multitest<ivl::nt::Bignum<std::int16_t, 10>>();
   multitest<ivl::nt::Bignum<std::int32_t, 2>>();
+  // this is stupid, we dont need Base*Base to be valid, but [0, Base*Base>
+  // TODO
+  multitest<ivl::nt::Bignum<std::uint32_t, (1 << 16) - 1>>();
+  multitest<ivl::nt::Bignum<std::uint64_t, (1ULL << 32) - 1>>();
   return 0;
 }
