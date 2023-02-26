@@ -22,6 +22,7 @@ include_directories(src)
 add_executable(hello bin/hello.cpp)
 add_executable(hello2 bin/hello2.cpp)
 add_executable(hello3 bin/hello3.cpp)
+add_executable(pollard bin/pollard-example.cpp)
 
 add_executable(ptest perftest/test.cpp)
 

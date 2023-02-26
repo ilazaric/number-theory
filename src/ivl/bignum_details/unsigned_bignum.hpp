@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <compare>
 #include <ostream>
 #include <vector>
@@ -174,34 +175,26 @@ public:
       throw 12;// TODO
     }
 
+    std::vector<UnsignedBignum> multiples{ arg };
+    std::vector<T> coefs{ 1 };
+    while (coefs.back() < Base) {
+      multiples.push_back(multiples.back() + multiples.back());
+      coefs.push_back(coefs.back() + coefs.back());
+    }
+    std::reverse(multiples.begin(), multiples.end());
+    std::reverse(coefs.begin(), coefs.end());
+
     UnsignedBignum acc;
     acc.m_digits.resize(this->m_digits.size() - arg.m_digits.size() + 1);
+    for (auto &multiple : multiples) multiple.m_digits.insert(multiple.m_digits.begin(), acc.m_digits.size(), T{});
     for (std::size_t shift = this->m_digits.size() - arg.m_digits.size(); shift != static_cast<std::size_t>(-1);
          --shift) {
-      auto generate_guess = [&arg, shift](T x) {
-        if (x == T{}) return UnsignedBignum{};
-        UnsignedBignum tmp;
-        tmp.m_digits = { x };
-        tmp *= arg;
-        tmp.m_digits.insert(tmp.m_digits.begin(), shift, T{});
-        return tmp;
-      };
-
-      T lo{ 0 }, hi{ Base - 1 };
-      for (T mid{ (lo + hi + 1) / 2 }; lo != hi; mid = (lo + hi + 1) / 2) {
-        UnsignedBignum tmp = generate_guess(mid);
-        if (tmp <= *this)
-          lo = mid;
-        else
-          hi = mid - 1;
-      }
-      if (*this >= generate_guess(lo + 1) || *this < generate_guess(lo)) {
-        throw 101;// TODO
-      }
-      if (lo) {
-        UnsignedBignum tmp = generate_guess(lo);
-        *this -= tmp;
-        acc.m_digits[shift] = lo;
+      for (auto &multiple : multiples) multiple.m_digits.erase(multiple.m_digits.begin());
+      for (std::size_t i = 0; i < multiples.size(); ++i) {
+        if (multiples[i] <= *this) {
+          acc.m_digits[shift] += coefs[i];
+          *this -= multiples[i];
+        }
       }
     }
 

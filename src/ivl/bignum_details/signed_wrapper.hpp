@@ -67,6 +67,10 @@ public:
     }
   }
 
+  bool operator==(const SignedWrapper &arg) const { return (*this <=> arg) == 0; }
+  bool operator!=(const SignedWrapper &arg) const { return (*this <=> arg) != 0; }
+  explicit operator bool() const { return !this->is_zero(); }
+
   static Sign opposite(Sign sign) noexcept
   {
     switch (sign) {
