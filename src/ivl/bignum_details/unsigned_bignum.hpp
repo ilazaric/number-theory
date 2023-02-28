@@ -21,9 +21,6 @@ template<typename T, T Base> class UnsignedBignum
 private:
   std::vector<T> m_digits;
 
-  // this is useful bc i want the same implementation when comparing against `View`
-  // static std::strong_ordering compare(const auto& left, const auto& right);
-
 public:
   // analogue of `std::string_view`
   // you can think of it as `const UnsignedBignum&`, though more powerful
