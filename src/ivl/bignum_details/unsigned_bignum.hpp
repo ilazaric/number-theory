@@ -218,18 +218,14 @@ template<typename T, T Base> UnsignedBignum<T, Base> &UnsignedBignum<T, Base>::o
 
   std::vector<T> tmp(this->m_digits.size() + arg.m_digits.size());
   for (std::size_t i = 0; i < this->m_digits.size(); ++i) {
-    for (std::size_t j = 0; j < arg.m_digits.size(); ++j) {
-      std::size_t current = i + j;
-      T carry = this->m_digits[i] * arg.m_digits[j];
-      while (carry) {
-        // if (current == tmp.size()) tmp.emplace_back();
-        carry += tmp[current];
-        tmp[current] = carry % Base;
-        carry /= Base;
-        ++current;
-      }
+    for (std::size_t j = 0; j < arg.m_digits.size(); ++j) { tmp[i + j] += this->m_digits[i] * arg.m_digits[j]; }
+    for (std::size_t j = i; j + 1 < std::min(tmp.size(), i + arg.m_digits.size() + 1); ++j) {
+      tmp[j + 1] += tmp[j] / Base;
+      tmp[j] %= Base;
     }
   }
+
+  // for (auto x : tmp) if (x >= Base) throw 42;
 
   while (tmp.back() == T{}) tmp.pop_back();
 
