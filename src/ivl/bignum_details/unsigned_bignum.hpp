@@ -18,7 +18,8 @@ template<typename T, T Base> class UnsignedBignum
   static_assert(T{ Base * Base } / Base == Base,
     "Type `T` must be capable of fully containing the expression `Base * Base`");
 
-private:
+  // TODO: stop being lazy
+public:
   std::vector<T> m_digits;
 
 public:
@@ -94,6 +95,7 @@ public:
     return out;
   }
 
+  // TODO: print Base as well
   friend std::ostream &operator<<(std::ostream &out, View arg)
   {
     for (std::size_t i = 0; i < arg.m_digits.size(); ++i) {
@@ -207,6 +209,35 @@ template<typename T, T Base> UnsignedBignum<T, Base> &UnsignedBignum<T, Base>::o
 }
 
 
+template<typename T, T Base>
+void shiftdiff(UnsignedBignum<T, Base> &left, std::size_t shift, const UnsignedBignum<T, Base> &right)
+{
+  T carry{ 0 };
+  for (std::size_t i = 0; i < right.m_digits.size(); ++i) {
+    carry += right.m_digits[i];
+    if (left.m_digits[i + shift] < carry) {
+      left.m_digits[i + shift] += Base - carry;
+      carry = 1;
+    } else {
+      left.m_digits[i + shift] -= carry;
+      carry = 0;
+    }
+  }
+
+  for (std::size_t i = right.m_digits.size(); carry != T{ 0 } && i < left.m_digits.size(); ++i) {
+    if (left.m_digits[i + shift] == T{ 0 }) {
+      left.m_digits[i + shift] = Base - 1;
+      carry = 1;
+    } else {
+      --left.m_digits[i + shift];
+      carry = 0;
+    }
+  }
+
+  while (!left.m_digits.empty() && left.m_digits.back() == T{ 0 }) { left.m_digits.pop_back(); }
+}
+
+
 // stupid slow implementation for now
 template<typename T, T Base> UnsignedBignum<T, Base> &UnsignedBignum<T, Base>::operator*=(View arg)
 {
@@ -253,14 +284,12 @@ template<typename T, T Base> UnsignedBignum<T, Base> &UnsignedBignum<T, Base>::o
 
   UnsignedBignum acc;
   acc.m_digits.resize(this->m_digits.size() - arg.m_digits.size() + 1);
-  for (auto &multiple : multiples) multiple.m_digits.insert(multiple.m_digits.begin(), acc.m_digits.size(), T{});
   for (std::size_t shift = this->m_digits.size() - arg.m_digits.size(); shift != static_cast<std::size_t>(-1);
        --shift) {
-    for (auto &multiple : multiples) multiple.m_digits.erase(multiple.m_digits.begin());
     for (std::size_t i = 0; i < multiples.size(); ++i) {
-      if (multiples[i] <= *this) {
+      if (multiples[i] <= View(*this, shift, this->m_digits.size())) {
         acc.m_digits[shift] += coefs[i];
-        *this -= multiples[i];
+        shiftdiff(*this, shift, multiples[i]);
       }
     }
   }
