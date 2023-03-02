@@ -17,7 +17,10 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   add_compile_options(-Weverything -Wno-c++98-compat -Wno-weak-vtables -Wno-zero-as-null-pointer-constant -Wno-padded -Wno-c++98-compat-pedantic)
 endif()
 
+# find_package(GMP REQUIRED)
+
 include_directories(src)
+link_libraries(flint mpfr gmp pthread)
 
 add_executable(hello bin/hello.cpp)
 add_executable(hello2 bin/hello2.cpp)
@@ -33,4 +36,6 @@ target_link_options(Test PRIVATE -fsanitize=address)
 target_compile_options(Test PRIVATE -fsanitize=undefined)
 target_link_options(Test PRIVATE -fsanitize=undefined)
 add_test(NAME MyTest COMMAND Test)
+
+
 

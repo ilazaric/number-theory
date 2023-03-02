@@ -1,10 +1,11 @@
-#include <ivl/bignum.hpp>
+// #include <ivl/bignum.hpp>
+#include <flint/fmpzxx.h>
 
 #include <iostream>
 
 int main()
 {
-  using Integer = ivl::nt::Bignum<std::uint32_t, 10>;
+  using Integer = flint::fmpzxx;
 
   Integer a{ 123 };
   Integer b{ 10219 };
@@ -13,7 +14,7 @@ int main()
   for (std::uint32_t i = 0; i < 5000; ++i) { c = c * a + a * c + b; }
 
   c %= Integer{ 1000000007 };
-  std::cout << c.template get<std::int64_t>() << std::endl;
+  std::cout << c << std::endl;
 
   return 0;
 }

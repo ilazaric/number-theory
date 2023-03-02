@@ -1,12 +1,14 @@
-#include <ivl/bignum.hpp>
+// #include <ivl/bignum.hpp>
 #include <ivl/divisors.hpp>
 #include <ivl/factorize.hpp>
 #include <ivl/lazy.hpp>
 #include <ivl/multi-fns.hpp>
-#include <ivl/pollard-rho.hpp>
+// #include <ivl/pollard-rho.hpp>
 #include <ivl/safe.hpp>
 
 #include <iostream>
+
+#include <flint/fmpzxx.h>
 
 template<typename T, typename U> std::ostream &operator<<(std::ostream &out, const std::pair<T, U> &p)
 {
@@ -24,7 +26,7 @@ int main()
   using ::ivl::nt::factorize;
 
   // using Bignum = ivl::nt::UnsignedBignum<std::uint32_t, 10>;
-  using Bignum = ivl::nt::Bignum<std::uint32_t, 10>;
+  using Bignum = flint::fmpzxx;
 
   // static_assert(std::three_way_comparable<Bignum>);
 

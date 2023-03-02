@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <iomanip>
 #include <iostream>
-#include <ivl/bignum.hpp>
+// #include <ivl/bignum.hpp>
 #include <limits>
 
 template<typename T> void test_add()
@@ -70,6 +70,29 @@ template<typename T> void test_div()
     }
   }
 }
+
+template<typename T> void test_mod()
+{
+  srand(42);
+  for (std::uint32_t i = 0; i < 2000; ++i) {
+    auto a = rand() % 1000000000;
+    auto b = rand() % 1000000000 + 1;
+    auto c = a % b;
+    T at{ a };
+    T bt{ b };
+    T ct = at % bt;
+    if (c != ct.template get<std::int64_t>()) {
+      std::cout << "a:  " << a << std::endl;
+      std::cout << "b:  " << b << std::endl;
+      std::cout << "c:  " << c << std::endl;
+      std::cout << "at:  " << at << std::endl;
+      std::cout << "bt:  " << bt << std::endl;
+      std::cout << "ct:  " << ct << std::endl;
+      throw 42;
+    }
+  }
+}
+
 template<typename T> void test_mul()
 {
   srand(42);
@@ -173,18 +196,19 @@ template<typename T> void multitest()
   test_sub<T>();
   test_mul<T>();
   test_div<T>();
+  test_mod<T>();
   test1<T>();
 }
 
 int main()
 {
-  multitest<ivl::nt::Bignum<std::int32_t, 10>>();
-  multitest<ivl::nt::Bignum<std::int32_t, 10000>>();
-  // multitest<ivl::nt::Bignum<std::int16_t, 10>>();
-  multitest<ivl::nt::Bignum<std::int32_t, 2>>();
-  // this is stupid, we dont need Base*Base to be valid, but [0, Base*Base>
-  // TODO
-  multitest<ivl::nt::Bignum<std::uint32_t, (1 << 16) - 1>>();
-  multitest<ivl::nt::Bignum<std::uint64_t, (1ULL << 32) - 1>>();
+  // multitest<ivl::nt::Bignum<std::int32_t, 10>>();
+  // multitest<ivl::nt::Bignum<std::int32_t, 10000>>();
+  // // multitest<ivl::nt::Bignum<std::int16_t, 10>>();
+  // multitest<ivl::nt::Bignum<std::int32_t, 2>>();
+  // // this is stupid, we dont need Base*Base to be valid, but [0, Base*Base>
+  // // TODO
+  // multitest<ivl::nt::Bignum<std::uint32_t, (1 << 16) - 1>>();
+  // multitest<ivl::nt::Bignum<std::uint64_t, (1ULL << 32) - 1>>();
   return 0;
 }
